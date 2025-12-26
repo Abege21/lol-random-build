@@ -7,8 +7,7 @@
 }
 
 body {
-    background-color: var(--bg-dark);
-    color: #f0e6d2;
+    background-color: var(--bg-dark); color: #f0e6d2;
     font-family: 'Beaufort for LoL', sans-serif;
     margin: 0; padding: 0; overflow-x: hidden;
 }
@@ -16,71 +15,69 @@ body {
 .bg-overlay {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
     background: url('https://images.contentstack.io/v3/assets/blt731eb9a2aa37dd06/blt6d5265f49d3298c5/5ed6697669d0d31481b67e88/LoL_LoL_E_Wallpaper_1.jpg') center/cover;
-    filter: brightness(0.1) blur(8px); z-index: -2;
+    filter: brightness(0.1) blur(10px); z-index: -2;
 }
 
-.app-wrapper {
-    display: flex; justify-content: center; min-height: 100vh;
-    width: 100%; max-width: 1400px; margin: 0 auto;
+.app-wrapper { display: flex; justify-content: center; min-height: 100vh; width: 100%; max-width: 1400px; margin: 0 auto; }
+
+/* Fixed Search Bar & Suggestions */
+.hex-search-container { position: relative; display: flex; align-items: center; justify-content: center; margin-bottom: 25px; width: 100%; }
+.hex-search-wrapper { position: relative; display: flex; align-items: center; background: rgba(1, 10, 19, 0.95); border: 1px solid var(--hex-gold-dark); padding: 8px 15px; width: 100%; transition: 0.4s; z-index: 20; }
+#champ-search { background: transparent; border: none; color: #f0e6d2; font-family: inherit; font-size: 18px; letter-spacing: 2px; width: 100%; outline: none; }
+
+.suggestions-list {
+    position: absolute; top: 100%; left: 0; width: calc(100% - 2px);
+    background: #010a13; border: 1px solid var(--hex-blue); border-top: none;
+    max-height: 220px; overflow-y: auto; display: none; z-index: 9999;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.9);
 }
+.suggestion-item { padding: 12px; cursor: pointer; border-bottom: 1px solid rgba(200,170,110,0.1); color: #f0e6d2; transition: 0.2s; }
+.suggestion-item:hover { background: var(--hex-gold); color: #000; }
 
-/* Yan Çerçeveler */
-.side-frame {
-    width: 180px; height: 85vh; position: sticky; top: 7vh;
-    border: 1px solid rgba(200,170,110,0.15);
-    background: linear-gradient(to bottom, transparent, rgba(200,170,110,0.05), transparent);
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-}
-.left-frame { border-radius: 0 40px 40px 0; border-left: none; margin-right: 20px; }
-.right-frame { border-radius: 40px 0 0 40px; border-right: none; margin-left: 20px; }
+.search-crystal { width: 10px; height: 10px; background: var(--hex-blue); border: 1px solid var(--hex-gold); transform: rotate(45deg); position: absolute; z-index: 21; box-shadow: 0 0 10px var(--hex-blue); }
+.left-c { left: -5px; } .right-c { right: -5px; }
+.search-energy-line { position: absolute; bottom: -1px; left: 0; width: 0%; height: 2px; background: linear-gradient(90deg, transparent, var(--hex-blue), #fff, var(--hex-blue), transparent); transition: 0.5s; }
+.hex-search-wrapper:focus-within .search-energy-line { width: 100%; }
 
-.frame-gem {
-    width: 30px; height: 30px; background: #005a82; border: 2px solid var(--hex-gold);
-    transform: rotate(45deg); box-shadow: 0 0 15px var(--hex-blue);
-    animation: gemPulse 3s infinite alternate;
-}
-@keyframes gemPulse { from { box-shadow: 0 0 5px var(--hex-blue); opacity: 0.6; } to { box-shadow: 0 0 20px var(--hex-blue); opacity: 1; } }
+/* Layout & Interface */
+.main-container { flex: 1; min-width: 400px; max-width: 750px; padding: 30px 15px; z-index: 5; }
+.interface-box { background: var(--glass-bg); border: 1px solid var(--hex-gold-dark); padding: 25px; position: relative; z-index: 10; }
 
-.main-container { flex: 1; max-width: 750px; padding: 30px 10px; }
-.main-title { font-size: 40px; text-align: center; background: linear-gradient(to bottom, #f0e6d2, #c8aa6e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; }
-.gold-line { height: 2px; background: linear-gradient(90deg, transparent, var(--hex-gold), transparent); margin: 20px 0; }
-
-.interface-box { background: var(--glass-bg); border: 1px solid var(--hex-gold-dark); padding: 20px; margin-bottom: 20px; }
-
-/* Lane Selector & Grid */
-.lane-selector { display: flex; justify-content: center; gap: 15px; margin: 15px 0; }
-.lane-btn { display: flex; flex-direction: column; align-items: center; cursor: pointer; filter: grayscale(1); opacity: 0.5; transition: 0.3s; }
+.lane-selector { display: flex; justify-content: center; gap: 12px; margin: 20px 0; }
+.lane-btn { display: flex; flex-direction: column; align-items: center; cursor: pointer; filter: grayscale(1); opacity: 0.4; width: 55px; transition: 0.3s; pointer-events: auto; }
 .lane-btn.active { filter: grayscale(0); opacity: 1; transform: translateY(-3px); }
-.lane-icon { width: 35px; height: 35px; color: var(--hex-gold); }
+.lane-icon { width: 30px; height: 30px; color: var(--hex-gold); margin-bottom: 5px; }
+.lane-btn span { font-size: 10px; font-weight: bold; color: var(--hex-gold); }
 
-.lane-champs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 8px; max-height: 150px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 10px; }
-.lane-champ-icon { width: 100%; border: 1px solid transparent; cursor: pointer; }
-.lane-champ-icon.selected { border-color: var(--hex-gold); box-shadow: 0 0 10px var(--hex-gold); }
+.lane-champs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(50px, 1fr)); gap: 8px; max-height: 180px; min-height: 60px; overflow-y: auto; background: rgba(0,0,0,0.4); padding: 10px; border: 1px solid rgba(200,170,110,0.1); }
+.lane-champ-icon { width: 100%; cursor: pointer; border: 1px solid transparent; opacity: 0.7; transition: 0.2s; pointer-events: auto; }
+.lane-champ-icon:hover, .lane-champ-icon.selected { opacity: 1; border-color: var(--hex-gold); box-shadow: 0 0 8px var(--hex-gold-dark); }
 
-/* Rünlerin Düzenli Dizilimi (Solda 4, Sağda 2) */
-.rune-layout { display: flex; justify-content: center; align-items: flex-start; gap: 60px; padding: 20px; background: rgba(0,0,0,0.5); border: 1px solid rgba(200,170,110,0.1); border-radius: 5px; }
-.rune-column { display: flex; flex-direction: column; align-items: center; gap: 15px; }
-.rune-divider { width: 1px; height: 180px; background: linear-gradient(transparent, var(--hex-gold-dark), transparent); opacity: 0.3; align-self: center; }
+/* Build Display & Tooltip */
+.custom-tooltip { position: fixed; z-index: 10000; background: rgba(1, 10, 19, 0.98); border: 1px solid var(--hex-gold); padding: 12px; font-size: 13px; max-width: 280px; pointer-events: none; box-shadow: 0 0 15px #000; }
+.tooltip-title { color: var(--hex-gold); font-weight: bold; font-size: 15px; display: block; border-bottom: 1px solid rgba(200,170,110,0.3); padding-bottom: 3px; margin-bottom: 5px; }
+.tooltip-desc { color: #cdbe91; }
 
-.rune-img { width: 45px; height: 45px; animation: float 4s ease-in-out infinite; filter: drop-shadow(0 0 8px rgba(0,0,0,0.8)); }
-.keystone { width: 85px; height: 85px; margin-bottom: 10px; filter: drop-shadow(0 0 15px var(--hex-gold-dark)); }
+.rune-layout { display: flex; justify-content: center; gap: 40px; padding: 25px; background: rgba(0,0,0,0.6); border: 1px solid var(--hex-gold-dark); }
+.rune-column { display: flex; flex-direction: column; align-items: center; gap: 15px; min-width: 100px; }
+.rune-name-label { font-size: 10px; color: var(--hex-gold); font-weight: bold; margin-top: 5px; text-align: center; }
+.rune-img { width: 45px; animation: float 4s infinite ease-in-out; }
+.keystone { width: 80px; filter: drop-shadow(0 0 12px var(--hex-gold-dark)); }
 
-@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
-
-/* Eşyalar ve Büyüler */
-.spells-row { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
-.spell-img { width: 45px; border: 1px solid var(--hex-gold); }
 .build-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; margin: 25px 0; }
-.item-slot { border: 1px solid var(--hex-gold-dark); background: #010a13; }
+.item-slot { border: 1px solid var(--hex-gold-dark); background: #010a13; cursor: help; }
 .item-slot img { width: 100%; display: block; }
 
-/* Buton */
-#generate-btn { width: 100%; background: #1e2328; color: var(--hex-gold); border: 1px solid var(--hex-gold); padding: 18px; cursor: pointer; position: relative; overflow: hidden; font-weight: bold; }
+#generate-btn { width: 100%; background: #1e2328; color: var(--hex-gold); border: 1px solid var(--hex-gold); padding: 18px; cursor: pointer; position: relative; font-weight: bold; overflow: hidden; margin-top: 15px; }
 .btn-progress { position: absolute; bottom: 0; left: 0; height: 4px; background: var(--hex-blue); width: 0%; }
 .loading .btn-progress { animation: load 1.2s linear forwards; }
-@keyframes load { from { width: 0%; } to { width: 100%; } }
 
 .hidden { display: none; }
-@keyframes reveal { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 .reveal-anim { animation: reveal 0.5s ease-out both; }
+@keyframes reveal { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes load { from { width: 0%; } to { width: 100%; } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+
+.side-frame { width: 150px; height: 85vh; position: sticky; top: 7vh; border: 1px solid rgba(200, 170, 110, 0.15); background: linear-gradient(to bottom, transparent, rgba(200, 170, 110, 0.05), transparent); display: flex; justify-content: center; align-items: center; }
+.frame-gem { width: 30px; height: 30px; background: #005a82; border: 2px solid var(--hex-gold); transform: rotate(45deg); box-shadow: 0 0 15px var(--hex-blue); }
 @media (max-width: 1000px) { .side-frame { display: none; } }

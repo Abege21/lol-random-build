@@ -11,10 +11,7 @@
     <div class="bg-overlay"></div>
     
     <div class="app-wrapper">
-        <div class="side-frame left-frame">
-            <div class="frame-gem"></div>
-            <div class="rune-scroll"></div>
-        </div>
+        <div class="side-frame left-frame"><div class="frame-gem"></div></div>
 
         <div class="main-container">
             <div class="header">
@@ -23,9 +20,17 @@
             </div>
 
             <div class="interface-box">
-                <div class="search-container">
-                    <input type="text" id="champ-search" placeholder="Şampiyon ara veya aşağıdan seç..." autocomplete="off">
-                    <div id="search-suggestions" class="suggestions-list"></div>
+                <div class="hex-search-container">
+                    <div class="search-crystal left-c"></div>
+                    <div class="hex-search-wrapper">
+                        <div class="search-icon-box">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </div>
+                        <input type="text" id="champ-search" placeholder="ŞAMPİYONUNU ÇAĞIR..." autocomplete="off">
+                        <div class="search-energy-line"></div>
+                        <div id="search-suggestions" class="suggestions-list"></div>
+                    </div>
+                    <div class="search-crystal right-c"></div>
                 </div>
                 
                 <div class="lane-selector">
@@ -42,20 +47,16 @@
 
             <div id="result-area" class="hidden">
                 <div id="champion-info" class="reveal-anim">
-                    <div class="champ-avatar-wrapper">
-                        <img id="champ-img" src="" alt="">
-                    </div>
+                    <div class="champ-avatar-wrapper"><img id="champ-img" src="" alt=""></div>
                     <h2 id="champ-name"></h2>
                     <div id="spells-display" class="spells-row"></div>
                 </div>
-
                 <div id="build-display" class="build-grid reveal-anim" style="animation-delay: 0.2s;"></div>
-
                 <div class="rune-section reveal-anim" style="animation-delay: 0.4s;">
                     <div id="rune-area" class="rune-layout">
-                        <div id="primary-runes" class="rune-column primary"></div>
+                        <div id="primary-runes" class="rune-column"></div>
                         <div class="rune-divider"></div>
-                        <div id="secondary-runes" class="rune-column secondary"></div>
+                        <div id="secondary-runes" class="rune-column"></div>
                     </div>
                 </div>
             </div>
@@ -65,12 +66,9 @@
                 <div class="btn-progress"></div>
             </button>
         </div>
-
-        <div class="side-frame right-frame">
-            <div class="frame-gem"></div>
-            <div class="rune-scroll"></div>
-        </div>
+        <div class="side-frame right-frame"><div class="frame-gem"></div></div>
     </div>
+    <div id="custom-tooltip" class="custom-tooltip hidden"></div>
     <script src="script.js"></script>
 </body>
 </html>
