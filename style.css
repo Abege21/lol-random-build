@@ -1,0 +1,114 @@
+:root {
+    --hex-gold: #c8aa6e;
+    --hex-gold-dark: #785a28;
+    --hex-blue: #0ac8b9;
+    --bg-dark: #010a13;
+    --card-bg: rgba(9, 20, 40, 0.95);
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: #f0e6d2;
+    font-family: 'Beaufort for LoL', sans-serif;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 40px 20px;
+}
+
+.bg-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: radial-gradient(circle, rgba(30,35,40,0) 0%, rgba(1,10,19,1) 80%);
+    z-index: -1;
+}
+
+.container {
+    background: var(--card-bg);
+    border: 1px solid var(--hex-gold-dark);
+    padding: 30px;
+    width: 100%;
+    max-width: 700px;
+    box-shadow: 0 0 50px rgba(0,0,0,0.9);
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.header h1 { color: var(--hex-gold); letter-spacing: 4px; margin: 0; text-align: center; }
+.gold-line { height: 2px; background: linear-gradient(90deg, transparent, var(--hex-gold), transparent); margin: 15px 0 25px; }
+
+.controls { display: flex; flex-direction: column; gap: 15px; margin-bottom: 25px; }
+
+.search-container { position: relative; width: 100%; }
+
+#champ-search {
+    background: rgba(30, 35, 40, 0.8);
+    border: 1px solid var(--hex-gold-dark);
+    color: var(--hex-gold);
+    padding: 15px;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 16px;
+    outline: none;
+    text-align: center;
+}
+
+.suggestions-list {
+    position: absolute;
+    top: 100%; left: 0; right: 0;
+    background: #1e2328;
+    border: 1px solid var(--hex-gold);
+    border-top: none;
+    z-index: 1000;
+    max-height: 250px;
+    overflow-y: auto;
+    display: none;
+}
+
+.suggestion-item {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(200, 170, 110, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.suggestion-item:hover { background: var(--hex-gold); color: var(--bg-dark); }
+.suggestion-item img { width: 35px; height: 35px; border-radius: 50%; }
+
+.lane-selector { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.lane-btn { background: #1e2328; color: #a09478; border: 1px solid var(--hex-gold-dark); padding: 8px 15px; cursor: pointer; }
+.lane-btn.active { background: var(--hex-gold); color: var(--bg-dark); box-shadow: 0 0 10px var(--hex-gold); }
+
+.img-frame { width: 110px; height: 110px; margin: 0 auto 10px; border: 2px solid var(--hex-gold); border-radius: 50%; padding: 5px; }
+#champ-img { width: 100%; height: 100%; border-radius: 50%; }
+#champ-name { text-align: center; color: #f0e6d2; margin-bottom: 20px; }
+
+.spells-row { display: flex; justify-content: center; gap: 15px; margin-bottom: 25px; }
+.spell-img { width: 50px; border: 1px solid var(--hex-gold); }
+
+.build-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; margin-bottom: 30px; }
+.item-slot { border: 1px solid var(--hex-gold-dark); }
+.item-slot img { width: 100%; display: block; }
+
+.rune-container { display: flex; justify-content: space-around; background: rgba(0,0,0,0.3); padding: 20px; border: 1px solid rgba(200, 170, 110, 0.1); }
+.rune-divider { width: 1px; height: 100px; background: var(--hex-gold-dark); opacity: 0.3; }
+.rune-column { display: flex; flex-direction: column; align-items: center; }
+.rune-column h4 { color: var(--hex-gold); margin: 0 0 10px; font-size: 12px; }
+.rune-img { width: 35px; height: 35px; margin: 4px; border-radius: 50%; }
+.keystone { width: 50px; height: 50px; border: 2px solid var(--hex-gold); }
+
+#generate-btn { background: #1e2328; color: var(--hex-gold); border: 1px solid var(--hex-gold); padding: 18px; width: 100%; font-size: 18px; cursor: pointer; margin-top: 25px; }
+#generate-btn:hover { background: var(--hex-gold); color: var(--bg-dark); }
+
+.hidden { display: none; }
+.fade-in { animation: fadeIn 0.8s ease-in; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+@media (max-width: 600px) { .build-grid { grid-template-columns: repeat(3, 1fr); } }
