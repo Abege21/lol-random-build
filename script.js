@@ -3,32 +3,25 @@ let selectedLane = "ALL";
 let allChampions = [];
 let forcedChamp = null;
 
-// GÜNCEL META KORİDOR EŞLEŞMELERİ
 const LANE_DATA = {
     TOP: ["Aatrox", "Akali", "Camille", "Cho'Gath", "Darius", "Dr. Mundo", "Fiora", "Gangplank", "Garen", "Gnar", "Gwen", "Illaoi", "Irelia", "Jax", "Jayce", "K'Sante", "Kayle", "Kennen", "Kled", "Malphite", "Mordekaiser", "Nasus", "Olaf", "Ornn", "Pantheon", "Poppy", "Quinn", "Renekton", "Riven", "Rumble", "Shen", "Singed", "Sion", "Tahm Kench", "Teemo", "Tryndamere", "Urgot", "Vayne", "Volibear", "Warwick", "Yorick", "Yasuo", "Yone"],
-    JUNGLE: ["Amumu", "Bel'Veth", "Briar", "Diana", "Ekko", "Evelynn", "Fiddlesticks", "Gragas", "Graves", "Hecarim", "Ivern", "Jarvan IV", "Jax", "Karthus", "Kayn", "Kha'Zix", "Kindred", "Lee Sin", "Lillia", "Master Yi", "Nidalee", "Nocturne", "Nunu & Willump", "Olaf", "Poppy", "Rammus", "Rek'Sai", "Rengar", "Sejuani", "Shaco", "Shyvana", "Skarner", "Taliyah", "Truandle", "Udyr", "Vi", "Viego", "Volibear", "Warwick", "Xin Zhao", "Zac"],
+    JUNGLE: ["Amumu", "Bel'Veth", "Briar", "Diana", "Ekko", "Evelynn", "Fiddlesticks", "Gragas", "Graves", "Hecarim", "Ivern", "Jarvan IV", "Jax", "Karthus", "Kayn", "Kha'Zix", "Kindred", "Lee Sin", "Lillia", "Master Yi", "Nidalee", "Nocturne", "Nunu & Willump", "Olaf", "Poppy", "Rammus", "Rek'Sai", "Rengar", "Sejuani", "Shaco", "Shyvana", "Skarner", "Taliyah", "Trundle", "Udyr", "Vi", "Viego", "Volibear", "Warwick", "Xin Zhao", "Zac"],
     MIDDLE: ["Ahri", "Akali", "Akshan", "Anivia", "Annie", "Aurelion Sol", "Azir", "Cassiopeia", "Corki", "Ekko", "Fizz", "Galio", "Hwei", "Irelia", "Kassadin", "Katarina", "LeBlanc", "Lissandra", "Lux", "Malzahar", "Naafiri", "Neeko", "Orianna", "Pantheon", "Ryze", "Sylas", "Syndra", "Talon", "Twisted Fate", "Veigar", "Vel'Koz", "Vex", "Viktor", "Vladimir", "Xerath", "Yasuo", "Yone", "Zed", "Zoe"],
     BOTTOM: ["Aphelios", "Ashe", "Caitlyn", "Draven", "Ezreal", "Jhin", "Jinx", "Kai'Sa", "Kalista", "Kog'Maw", "Lucian", "Miss Fortune", "Nilah", "Samira", "Sivir", "Smolder", "Tristana", "Twitch", "Varus", "Vayne", "Xayah", "Zeri"],
-    UTILITY: ["Alistar", "Bard", "Blitzcrank", "Brand", "Brau", "Janna", "Karma", "Leona", "Lulu", "Lux", "Milio", "Morgana", "Nami", "Nautilus", "Pyke", "Rakan", "Rell", "Renata Glasc", "Seraphine", "Senna", "Shaco", "Sonata", "Soraka", "Swain", "Taric", "Thresh", "Xerath", "Yuumi", "Zilean", "Zyra"]
+    UTILITY: ["Alistar", "Bard", "Blitzcrank", "Brand", "Braum", "Janna", "Karma", "Leona", "Lulu", "Lux", "Milio", "Morgana", "Nami", "Nautilus", "Pyke", "Rakan", "Rell", "Renata Glasc", "Seraphine", "Senna", "Shaco", "Sona", "Soraka", "Swain", "Taric", "Thresh", "Xerath", "Yuumi", "Zilean", "Zyra"]
 };
 
-const EXCLUSIVE_GROUPS = [
-    ["3035", "3036", "3033", "6694"], // Zırh Delme
-    ["3003", "3004", "3119"]          // Gözyaşı
-];
+const EXCLUSIVE_GROUPS = [["3035", "3036", "3033", "6694"], ["3003", "3004", "3119"]];
 
 window.onload = async () => {
-    try {
-        const res = await fetch(`https://ddragon.leagueoflegends.com/cdn/${VERSION}/data/tr_TR/champion.json`);
-        const data = await res.json();
-        allChampions = Object.values(data.data);
-        updateLaneView("ALL");
-    } catch(e) { console.error(e); }
+    const res = await fetch(`https://ddragon.leagueoflegends.com/cdn/${VERSION}/data/tr_TR/champion.json`);
+    const data = await res.json();
+    allChampions = Object.values(data.data);
+    updateLaneView("ALL");
 };
 
 function setLane(lane, btn) {
-    selectedLane = lane;
-    forcedChamp = null;
+    selectedLane = lane; forcedChamp = null;
     document.getElementById('champ-search').value = "";
     document.querySelectorAll('.lane-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
@@ -38,12 +31,8 @@ function setLane(lane, btn) {
 function updateLaneView(lane) {
     const container = document.getElementById('lane-champions');
     let pool = (lane === "ALL") ? allChampions : allChampions.filter(c => LANE_DATA[lane].includes(c.name));
-    
     pool.sort((a, b) => a.name.localeCompare(b.name));
-    container.innerHTML = pool.map(c => `
-        <img src="https://ddragon.leagueoflegends.com/cdn/${VERSION}/img/champion/${c.id}.png" 
-             class="lane-champ-icon" title="${c.name}" onclick="selectFromGrid('${c.id}', this)">
-    `).join("");
+    container.innerHTML = pool.map(c => `<img src="https://ddragon.leagueoflegends.com/cdn/${VERSION}/img/champion/${c.id}.png" class="lane-champ-icon" onclick="selectFromGrid('${c.id}', this)">`).join("");
 }
 
 function selectFromGrid(id, el) {
@@ -58,9 +47,7 @@ document.getElementById('champ-search').addEventListener('input', function(e) {
     const sugg = document.getElementById('search-suggestions');
     if(val.length < 1) { sugg.style.display='none'; return; }
     const filtered = allChampions.filter(c => c.name.toLowerCase().replace(/['\s]/g, "").includes(val));
-    sugg.innerHTML = filtered.map(c => `<div class="suggestion-item" onclick="applySearch('${c.name.replace("'", "\\'")}')">
-        <img src="https://ddragon.leagueoflegends.com/cdn/${VERSION}/img/champion/${c.id}.png" width="30">
-        <span>${c.name}</span></div>`).join("");
+    sugg.innerHTML = filtered.map(c => `<div class="suggestion-item" onclick="applySearch('${c.name.replace("'", "\\'")}')">${c.name}</div>`).join("");
     sugg.style.display = 'block';
 });
 
@@ -71,10 +58,7 @@ function applySearch(name) {
 }
 
 async function generateBuild() {
-    const btn = document.getElementById('generate-btn');
-    btn.classList.add('loading');
-    btn.disabled = true;
-    
+    const btn = document.getElementById('generate-btn'); btn.classList.add('loading'); btn.disabled = true;
     setTimeout(async () => {
         try {
             const [itemRes, runeRes, spellRes] = await Promise.all([
@@ -82,23 +66,15 @@ async function generateBuild() {
                 fetch(`https://ddragon.leagueoflegends.com/cdn/${VERSION}/data/tr_TR/runesReforged.json`),
                 fetch(`https://ddragon.leagueoflegends.com/cdn/${VERSION}/data/tr_TR/summoner.json`)
             ]);
-            const itemsData = await itemRes.json();
-            const runesData = await runeRes.json();
-            const spellsData = await spellRes.json();
-
-            let champ = forcedChamp;
-            if(!champ) {
-                const searchVal = document.getElementById('champ-search').value.trim().toLowerCase().replace(/['\s]/g, "");
-                if (searchVal) champ = allChampions.find(c => c.name.toLowerCase().replace(/['\s]/g, "").includes(searchVal));
-            }
-            if(!champ) {
-                let pool = (selectedLane === "ALL") ? allChampions : allChampions.filter(c => LANE_DATA[selectedLane].includes(c.name));
-                champ = pool[Math.floor(Math.random() * pool.length)];
-            }
+            const itemsData = await itemRes.json(); const runesData = await runeRes.json(); const spellsData = await spellRes.json();
+            
+            let champ = forcedChamp || allChampions.filter(c => selectedLane === "ALL" || LANE_DATA[selectedLane].includes(c.name))[Math.floor(Math.random()*10)];
+            if(!champ) champ = allChampions[Math.floor(Math.random()*allChampions.length)];
 
             document.getElementById('champ-img').src = `https://ddragon.leagueoflegends.com/cdn/${VERSION}/img/champion/${champ.id}.png`;
             document.getElementById('champ-name').innerText = champ.name.toUpperCase();
 
+            // Büyüler
             let sPool = Object.values(spellsData.data).filter(s => s.modes.includes("CLASSIC") && s.id !== "SummonerSmiteAvatar");
             const finalSpells = [];
             if(selectedLane === "JUNGLE") finalSpells.push(sPool.find(s => s.id === "SummonerSmite"));
@@ -109,6 +85,7 @@ async function generateBuild() {
             }
             document.getElementById('spells-display').innerHTML = finalSpells.map(s => `<img src="https://ddragon.leagueoflegends.com/cdn/${VERSION}/img/spell/${s.id}.png" class="spell-img">`).join("");
 
+            // Eşyalar
             let bPool = [], iPool = [];
             for(let id in itemsData.data) {
                 const item = itemsData.data[id];
@@ -126,16 +103,17 @@ async function generateBuild() {
             }
             document.getElementById('build-display').innerHTML = build.map(id => `<div class="item-slot"><img src="https://ddragon.leagueoflegends.com/cdn/${VERSION}/img/item/${id}.png"></div>`).join("");
 
+            // Rünler (Fixli: 4 Ana, 2 Yan)
             const pT = runesData[Math.floor(Math.random()*runesData.length)];
             let sT; do { sT = runesData[Math.floor(Math.random()*runesData.length)]; } while(sT.id === pT.id);
             const pR = pT.slots.map(s => s.runes[Math.floor(Math.random()*s.runes.length)]);
             const sR = [...sT.slots.slice(1)].sort(() => 0.5-Math.random()).slice(0,2).map(s => s.runes[Math.floor(Math.random()*s.runes.length)]);
-            document.getElementById('primary-runes').innerHTML = "<h4>ANA</h4>" + pR.map((r, i) => `<img src="https://ddragon.leagueoflegends.com/cdn/img/${r.icon}" class="rune-img ${i===0?'keystone':''}">`).join("");
-            document.getElementById('secondary-runes').innerHTML = "<h4>YAN</h4>" + sR.map(r => `<img src="https://ddragon.leagueoflegends.com/cdn/img/${r.icon}" class="rune-img">`).join("");
+            
+            document.getElementById('primary-runes').innerHTML = pR.map((r, i) => `<img src="https://ddragon.leagueoflegends.com/cdn/img/${r.icon}" class="rune-img ${i===0?'keystone':''}">`).join("");
+            document.getElementById('secondary-runes').innerHTML = sR.map(r => `<img src="https://ddragon.leagueoflegends.com/cdn/img/${r.icon}" class="rune-img">`).join("");
 
             document.getElementById('result-area').classList.remove('hidden');
         } catch(e) { console.error(e); }
-        btn.classList.remove('loading');
-        btn.disabled = false;
+        btn.classList.remove('loading'); btn.disabled = false;
     }, 1200);
 }

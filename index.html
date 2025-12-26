@@ -3,63 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LoL Hextech Builder</title>
+    <title>ABG Random Build</title>
     <link href="https://fonts.cdnfonts.com/css/beaufort-for-lol" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="bg-overlay"></div>
     
-    <div class="container">
-        <div class="header">
-            <h1>HEXTECH BUILDER</h1>
-            <div class="gold-line"></div>
+    <div class="app-wrapper">
+        <div class="side-frame left-frame">
+            <div class="frame-gem"></div>
+            <div class="rune-scroll"></div>
         </div>
 
-        <div class="controls">
-            <div class="search-container">
-                <input type="text" id="champ-search" placeholder="Şampiyon ara veya aşağıdan seç..." autocomplete="off">
-                <div id="search-suggestions" class="suggestions-list"></div>
-            </div>
-            
-            <div class="lane-selector">
-                <button class="lane-btn active" onclick="setLane('ALL', this)">HEPSİ</button>
-                <button class="lane-btn" onclick="setLane('TOP', this)">TOP</button>
-                <button class="lane-btn" onclick="setLane('JUNGLE', this)">JNG</button>
-                <button class="lane-btn" onclick="setLane('MIDDLE', this)">MID</button>
-                <button class="lane-btn" onclick="setLane('BOTTOM', this)">ADC</button>
-                <button class="lane-btn" onclick="setLane('UTILITY', this)">SUP</button>
+        <div class="main-container">
+            <div class="header">
+                <h1 class="main-title">ABG RANDOM BUILD</h1>
+                <div class="gold-line"></div>
             </div>
 
-            <div id="lane-champions" class="lane-champs-grid">
+            <div class="interface-box">
+                <div class="search-container">
+                    <input type="text" id="champ-search" placeholder="Şampiyon ara veya aşağıdan seç..." autocomplete="off">
+                    <div id="search-suggestions" class="suggestions-list"></div>
                 </div>
-        </div>
-
-        <div id="result-area" class="hidden">
-            <div id="champion-info" class="reveal-anim">
-                <div class="img-frame">
-                    <img id="champ-img" src="" alt="">
+                
+                <div class="lane-selector">
+                    <div class="lane-btn active" onclick="setLane('ALL', this)"><svg viewBox="0 0 100 100" class="lane-icon"><path d="M50 5L95 27.5V72.5L50 95L5 72.5V27.5L50 5Z" fill="none" stroke="currentColor" stroke-width="3"/></svg><span>HEPSİ</span></div>
+                    <div class="lane-btn" onclick="setLane('TOP', this)"><svg viewBox="0 0 100 100" class="lane-icon"><path d="M20 20 L50 10 L80 20 L80 50 L50 40 L20 50 Z" fill="currentColor"/></svg><span>TOP</span></div>
+                    <div class="lane-btn" onclick="setLane('JUNGLE', this)"><svg viewBox="0 0 100 100" class="lane-icon"><path d="M50 15 L70 45 L50 35 L30 45 Z M50 50 L70 80 L50 70 L30 80 Z" fill="currentColor"/></svg><span>JNG</span></div>
+                    <div class="lane-btn" onclick="setLane('MIDDLE', this)"><svg viewBox="0 0 100 100" class="lane-icon"><path d="M50 10 L90 50 L50 90 L10 50 Z" fill="currentColor"/></svg><span>MID</span></div>
+                    <div class="lane-btn" onclick="setLane('BOTTOM', this)"><svg viewBox="0 0 100 100" class="lane-icon"><path d="M20 80 L50 70 L80 80 L80 50 L50 60 L20 50 Z" fill="currentColor"/></svg><span>ADC</span></div>
+                    <div class="lane-btn" onclick="setLane('UTILITY', this)"><svg viewBox="0 0 100 100" class="lane-icon"><circle cx="50" cy="50" r="25" fill="none" stroke="currentColor" stroke-width="5"/><path d="M50 20 L50 80 M20 50 L80 50" stroke="currentColor" stroke-width="5"/></svg><span>SUP</span></div>
                 </div>
-                <h2 id="champ-name"></h2>
+
+                <div id="lane-champions" class="lane-champs-grid"></div>
             </div>
 
-            <div id="spells-display" class="spells-row reveal-anim" style="animation-delay: 0.2s;"></div>
-            
-            <div id="build-display" class="build-grid reveal-anim" style="animation-delay: 0.4s;"></div>
+            <div id="result-area" class="hidden">
+                <div id="champion-info" class="reveal-anim">
+                    <div class="champ-avatar-wrapper">
+                        <img id="champ-img" src="" alt="">
+                    </div>
+                    <h2 id="champ-name"></h2>
+                    <div id="spells-display" class="spells-row"></div>
+                </div>
 
-            <div id="rune-area" class="rune-container reveal-anim" style="animation-delay: 0.6s;">
-                <div id="primary-runes" class="rune-column"></div>
-                <div class="rune-divider"></div>
-                <div id="secondary-runes" class="rune-column"></div>
+                <div id="build-display" class="build-grid reveal-anim" style="animation-delay: 0.2s;"></div>
+
+                <div class="rune-section reveal-anim" style="animation-delay: 0.4s;">
+                    <div id="rune-area" class="rune-layout">
+                        <div id="primary-runes" class="rune-column primary"></div>
+                        <div class="rune-divider"></div>
+                        <div id="secondary-runes" class="rune-column secondary"></div>
+                    </div>
+                </div>
             </div>
+
+            <button id="generate-btn" onclick="generateBuild()">
+                <div class="btn-text">HEXTECH İŞLE</div>
+                <div class="btn-progress"></div>
+            </button>
         </div>
 
-        <button id="generate-btn" onclick="generateBuild()">
-            <div class="btn-content">HEXTECH OLUŞTUR</div>
-            <div class="btn-loader"></div>
-        </button>
+        <div class="side-frame right-frame">
+            <div class="frame-gem"></div>
+            <div class="rune-scroll"></div>
+        </div>
     </div>
-    
     <script src="script.js"></script>
 </body>
 </html>
