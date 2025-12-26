@@ -1,160 +1,141 @@
 const VERSION = "14.24.1"; 
 let selectedLane = "ALL";
 let allChampions = [];
+let forcedChamp = null;
 
-// Sayfa yüklendiğinde şampiyonları önbelleğe al
+// GÜNCEL META KORİDOR EŞLEŞMELERİ
+const LANE_DATA = {
+    TOP: ["Aatrox", "Akali", "Camille", "Cho'Gath", "Darius", "Dr. Mundo", "Fiora", "Gangplank", "Garen", "Gnar", "Gwen", "Illaoi", "Irelia", "Jax", "Jayce", "K'Sante", "Kayle", "Kennen", "Kled", "Malphite", "Mordekaiser", "Nasus", "Olaf", "Ornn", "Pantheon", "Poppy", "Quinn", "Renekton", "Riven", "Rumble", "Shen", "Singed", "Sion", "Tahm Kench", "Teemo", "Tryndamere", "Urgot", "Vayne", "Volibear", "Warwick", "Yorick", "Yasuo", "Yone"],
+    JUNGLE: ["Amumu", "Bel'Veth", "Briar", "Diana", "Ekko", "Evelynn", "Fiddlesticks", "Gragas", "Graves", "Hecarim", "Ivern", "Jarvan IV", "Jax", "Karthus", "Kayn", "Kha'Zix", "Kindred", "Lee Sin", "Lillia", "Master Yi", "Nidalee", "Nocturne", "Nunu & Willump", "Olaf", "Poppy", "Rammus", "Rek'Sai", "Rengar", "Sejuani", "Shaco", "Shyvana", "Skarner", "Taliyah", "Truandle", "Udyr", "Vi", "Viego", "Volibear", "Warwick", "Xin Zhao", "Zac"],
+    MIDDLE: ["Ahri", "Akali", "Akshan", "Anivia", "Annie", "Aurelion Sol", "Azir", "Cassiopeia", "Corki", "Ekko", "Fizz", "Galio", "Hwei", "Irelia", "Kassadin", "Katarina", "LeBlanc", "Lissandra", "Lux", "Malzahar", "Naafiri", "Neeko", "Orianna", "Pantheon", "Ryze", "Sylas", "Syndra", "Talon", "Twisted Fate", "Veigar", "Vel'Koz", "Vex", "Viktor", "Vladimir", "Xerath", "Yasuo", "Yone", "Zed", "Zoe"],
+    BOTTOM: ["Aphelios", "Ashe", "Caitlyn", "Draven", "Ezreal", "Jhin", "Jinx", "Kai'Sa", "Kalista", "Kog'Maw", "Lucian", "Miss Fortune", "Nilah", "Samira", "Sivir", "Smolder", "Tristana", "Twitch", "Varus", "Vayne", "Xayah", "Zeri"],
+    UTILITY: ["Alistar", "Bard", "Blitzcrank", "Brand", "Brau", "Janna", "Karma", "Leona", "Lulu", "Lux", "Milio", "Morgana", "Nami", "Nautilus", "Pyke", "Rakan", "Rell", "Renata Glasc", "Seraphine", "Senna", "Shaco", "Sonata", "Soraka", "Swain", "Taric", "Thresh", "Xerath", "Yuumi", "Zilean", "Zyra"]
+};
+
+const EXCLUSIVE_GROUPS = [
+    ["3035", "3036", "3033", "6694"], // Zırh Delme
+    ["3003", "3004", "3119"]          // Gözyaşı
+];
+
 window.onload = async () => {
     try {
         const res = await fetch(`https://ddragon.leagueoflegends.com/cdn/${VERSION}/data/tr_TR/champion.json`);
         const data = await res.json();
         allChampions = Object.values(data.data);
-    } catch(e) { 
-        console.error("Şampiyonlar yüklenemedi:", e); 
-    }
+        updateLaneView("ALL");
+    } catch(e) { console.error(e); }
 };
 
-// Koridor Seçimi Fonksiyonu
 function setLane(lane, btn) {
     selectedLane = lane;
+    forcedChamp = null;
+    document.getElementById('champ-search').value = "";
     document.querySelectorAll('.lane-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
+    updateLaneView(lane);
 }
 
-// Arama Önerileri Sistemi
-document.getElementById('champ-search').addEventListener('input', function(e) {
-    const value = e.target.value.toLowerCase();
-    const suggestions = document.getElementById('search-suggestions');
+function updateLaneView(lane) {
+    const container = document.getElementById('lane-champions');
+    let pool = (lane === "ALL") ? allChampions : allChampions.filter(c => LANE_DATA[lane].includes(c.name));
     
-    if (value.length < 1) { 
-        suggestions.style.display = 'none'; 
-        return; 
-    }
+    pool.sort((a, b) => a.name.localeCompare(b.name));
+    container.innerHTML = pool.map(c => `
+        <img src="https://ddragon.leagueoflegends.com/cdn/${VERSION}/img/champion/${c.id}.png" 
+             class="lane-champ-icon" title="${c.name}" onclick="selectFromGrid('${c.id}', this)">
+    `).join("");
+}
 
-    const filtered = allChampions.filter(c => c.name.toLowerCase().includes(value));
+function selectFromGrid(id, el) {
+    forcedChamp = allChampions.find(c => c.id === id);
+    document.querySelectorAll('.lane-champ-icon').forEach(i => i.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('champ-search').value = forcedChamp.name;
+}
 
-    if (filtered.length > 0) {
-        suggestions.innerHTML = filtered.map(c => `
-            <div class="suggestion-item" onclick="selectChampion('${c.name}')">
-                <img src="https://ddragon.leagueoflegends.com/cdn/${VERSION}/img/champion/${c.id}.png">
-                <span>${c.name}</span>
-            </div>
-        `).join("");
-        suggestions.style.display = 'block';
-    } else { 
-        suggestions.style.display = 'none'; 
-    }
+document.getElementById('champ-search').addEventListener('input', function(e) {
+    const val = e.target.value.toLowerCase().replace(/['\s]/g, "");
+    const sugg = document.getElementById('search-suggestions');
+    if(val.length < 1) { sugg.style.display='none'; return; }
+    const filtered = allChampions.filter(c => c.name.toLowerCase().replace(/['\s]/g, "").includes(val));
+    sugg.innerHTML = filtered.map(c => `<div class="suggestion-item" onclick="applySearch('${c.name.replace("'", "\\'")}')">
+        <img src="https://ddragon.leagueoflegends.com/cdn/${VERSION}/img/champion/${c.id}.png" width="30">
+        <span>${c.name}</span></div>`).join("");
+    sugg.style.display = 'block';
 });
 
-function selectChampion(name) {
+function applySearch(name) {
     document.getElementById('champ-search').value = name;
-    document.getElementById('search-suggestions').style.display = 'none';
+    document.getElementById('search-suggestions').style.display='none';
+    forcedChamp = allChampions.find(c => c.name === name);
 }
 
-// ANA FONKSİYON: BUILD OLUŞTURMA
 async function generateBuild() {
     const btn = document.getElementById('generate-btn');
-    const searchVal = document.getElementById('champ-search').value.trim().toLowerCase();
-    btn.innerText = "HEXTECH İŞLENİYOR...";
+    btn.classList.add('loading');
+    btn.disabled = true;
     
-    try {
-        const [itemRes, runeRes, spellRes] = await Promise.all([
-            fetch(`https://ddragon.leagueoflegends.com/cdn/${VERSION}/data/tr_TR/item.json`),
-            fetch(`https://ddragon.leagueoflegends.com/cdn/${VERSION}/data/tr_TR/runesReforged.json`),
-            fetch(`https://ddragon.leagueoflegends.com/cdn/${VERSION}/data/tr_TR/summoner.json`)
-        ]);
+    setTimeout(async () => {
+        try {
+            const [itemRes, runeRes, spellRes] = await Promise.all([
+                fetch(`https://ddragon.leagueoflegends.com/cdn/${VERSION}/data/tr_TR/item.json`),
+                fetch(`https://ddragon.leagueoflegends.com/cdn/${VERSION}/data/tr_TR/runesReforged.json`),
+                fetch(`https://ddragon.leagueoflegends.com/cdn/${VERSION}/data/tr_TR/summoner.json`)
+            ]);
+            const itemsData = await itemRes.json();
+            const runesData = await runeRes.json();
+            const spellsData = await spellRes.json();
 
-        const itemsData = await itemRes.json();
-        const runesData = await runeRes.json();
-        const spellsData = await spellRes.json();
-
-        // --- 1. ŞAMPİYON BELİRLEME ---
-        let selectedChamp;
-        if (searchVal) {
-            selectedChamp = allChampions.find(c => c.name.toLowerCase().includes(searchVal));
-        } 
-        
-        if (!selectedChamp) {
-            let pool = [...allChampions];
-            if (selectedLane !== "ALL") {
-                pool = pool.filter(c => {
-                    if (selectedLane === "TOP") return c.tags.includes("Tank") || c.tags.includes("Fighter");
-                    if (selectedLane === "JUNGLE") return c.tags.includes("Assassin") || c.tags.includes("Fighter") || c.tags.includes("Tank");
-                    if (selectedLane === "MIDDLE") return c.tags.includes("Mage") || c.tags.includes("Assassin");
-                    if (selectedLane === "BOTTOM") return c.tags.includes("Marksman");
-                    if (selectedLane === "UTILITY") return c.tags.includes("Support") || c.tags.includes("Mage");
-                });
+            let champ = forcedChamp;
+            if(!champ) {
+                const searchVal = document.getElementById('champ-search').value.trim().toLowerCase().replace(/['\s]/g, "");
+                if (searchVal) champ = allChampions.find(c => c.name.toLowerCase().replace(/['\s]/g, "").includes(searchVal));
             }
-            selectedChamp = pool[Math.floor(Math.random() * pool.length)];
-        }
-
-        document.getElementById('champ-img').src = `https://ddragon.leagueoflegends.com/cdn/${VERSION}/img/champion/${selectedChamp.id}.png`;
-        document.getElementById('champ-name').innerText = selectedChamp.name.toUpperCase();
-
-        // --- 2. SİHİRDAR BÜYÜLERİ (DÜZELTİLMİŞ KISIM) ---
-        let spellsPool = Object.values(spellsData.data).filter(s => s.modes.includes("CLASSIC") && s.id !== "SummonerSmiteAvatar");
-        const finalSpells = [];
-
-        // JUNGLE seçiliyse Smite'ı ekle, değilse Smite'ı havuzdan tamamen çıkar
-        const smiteSpell = spellsPool.find(s => s.id === "SummonerSmite");
-
-        if (selectedLane === "JUNGLE") {
-            finalSpells.push(smiteSpell);
-        }
-
-        // Smite'ı havuzdan çıkarıyoruz (Her durumda: JNG ise zaten ekledik, değilse gelmesini istemiyoruz)
-        spellsPool = spellsPool.filter(s => s.id !== "SummonerSmite");
-
-        while(finalSpells.length < 2) {
-            const randomIndex = Math.floor(Math.random() * spellsPool.length);
-            const r = spellsPool[randomIndex];
-            if(!finalSpells.some(s => s.id === r.id)) {
-                finalSpells.push(r);
+            if(!champ) {
+                let pool = (selectedLane === "ALL") ? allChampions : allChampions.filter(c => LANE_DATA[selectedLane].includes(c.name));
+                champ = pool[Math.floor(Math.random() * pool.length)];
             }
-        }
-        document.getElementById('spells-display').innerHTML = finalSpells.map(s => 
-            `<img src="https://ddragon.leagueoflegends.com/cdn/${VERSION}/img/spell/${s.id}.png" class="spell-img" title="${s.name}">`
-        ).join("");
 
-        // --- 3. EŞYALAR (1 BOT + 5 TAMAMLANMIŞ) ---
-        let bootsPool = [], itemsPool = [];
-        for (let id in itemsData.data) {
-            const item = itemsData.data[id];
-            if (item.maps[11] && item.gold.purchasable && !item.requiredChampion) {
-                if (item.tags.includes("Boots") && item.gold.total > 500) bootsPool.push(id);
-                else if (!item.into && item.gold.total >= 2800) itemsPool.push(id);
+            document.getElementById('champ-img').src = `https://ddragon.leagueoflegends.com/cdn/${VERSION}/img/champion/${champ.id}.png`;
+            document.getElementById('champ-name').innerText = champ.name.toUpperCase();
+
+            let sPool = Object.values(spellsData.data).filter(s => s.modes.includes("CLASSIC") && s.id !== "SummonerSmiteAvatar");
+            const finalSpells = [];
+            if(selectedLane === "JUNGLE") finalSpells.push(sPool.find(s => s.id === "SummonerSmite"));
+            sPool = sPool.filter(s => s.id !== "SummonerSmite");
+            while(finalSpells.length < 2) {
+                const r = sPool[Math.floor(Math.random()*sPool.length)];
+                if(!finalSpells.some(s => s.id === r.id)) finalSpells.push(r);
             }
-        }
-        const build = [];
-        if (selectedChamp.id !== "Cassiopeia") {
-            build.push(bootsPool[Math.floor(Math.random() * bootsPool.length)]);
-        }
-        while (build.length < 6) {
-            const rId = itemsPool[Math.floor(Math.random() * itemsPool.length)];
-            if (!build.includes(rId)) build.push(rId);
-        }
-        document.getElementById('build-display').innerHTML = build.map(id => 
-            `<div class="item-slot"><img src="https://ddragon.leagueoflegends.com/cdn/${VERSION}/img/item/${id}.png"></div>`
-        ).join("");
+            document.getElementById('spells-display').innerHTML = finalSpells.map(s => `<img src="https://ddragon.leagueoflegends.com/cdn/${VERSION}/img/spell/${s.id}.png" class="spell-img">`).join("");
 
-        // --- 4. RÜNLER ---
-        const pTree = runesData[Math.floor(Math.random() * runesData.length)];
-        let sTree; 
-        do { sTree = runesData[Math.floor(Math.random() * runesData.length)]; } while (sTree.id === pTree.id);
-        
-        const pRunes = pTree.slots.map(s => s.runes[Math.floor(Math.random() * s.runes.length)]);
-        const sSlots = [...sTree.slots.slice(1)].sort(() => 0.5 - Math.random()).slice(0, 2);
-        const sRunes = sSlots.map(s => s.runes[Math.floor(Math.random() * s.runes.length)]);
+            let bPool = [], iPool = [];
+            for(let id in itemsData.data) {
+                const item = itemsData.data[id];
+                if(item.maps[11] && item.gold.purchasable && !item.requiredChampion) {
+                    if(item.tags.includes("Boots") && item.gold.total > 500) bPool.push(id);
+                    else if(!item.into && item.gold.total >= 2500) iPool.push(id);
+                }
+            }
+            const build = [];
+            if(champ.id !== "Cassiopeia") build.push(bPool[Math.floor(Math.random()*bPool.length)]);
+            while(build.length < 6) {
+                const rId = iPool[Math.floor(Math.random()*iPool.length)];
+                let conflict = EXCLUSIVE_GROUPS.some(g => g.includes(rId) && build.some(o => g.includes(o)));
+                if(!build.includes(rId) && !conflict) build.push(rId);
+            }
+            document.getElementById('build-display').innerHTML = build.map(id => `<div class="item-slot"><img src="https://ddragon.leagueoflegends.com/cdn/${VERSION}/img/item/${id}.png"></div>`).join("");
 
-        document.getElementById('primary-runes').innerHTML = "<h4>ANA AĞAÇ</h4>" + pRunes.map((r, i) => 
-            `<img src="https://ddragon.leagueoflegends.com/cdn/img/${r.icon}" class="rune-img ${i===0?'keystone':''}" title="${r.name}">`
-        ).join("");
-        document.getElementById('secondary-runes').innerHTML = "<h4>YAN AĞAÇ</h4>" + sRunes.map(r => 
-            `<img src="https://ddragon.leagueoflegends.com/cdn/img/${r.icon}" class="rune-img" title="${r.name}">`
-        ).join("");
+            const pT = runesData[Math.floor(Math.random()*runesData.length)];
+            let sT; do { sT = runesData[Math.floor(Math.random()*runesData.length)]; } while(sT.id === pT.id);
+            const pR = pT.slots.map(s => s.runes[Math.floor(Math.random()*s.runes.length)]);
+            const sR = [...sT.slots.slice(1)].sort(() => 0.5-Math.random()).slice(0,2).map(s => s.runes[Math.floor(Math.random()*s.runes.length)]);
+            document.getElementById('primary-runes').innerHTML = "<h4>ANA</h4>" + pR.map((r, i) => `<img src="https://ddragon.leagueoflegends.com/cdn/img/${r.icon}" class="rune-img ${i===0?'keystone':''}">`).join("");
+            document.getElementById('secondary-runes').innerHTML = "<h4>YAN</h4>" + sR.map(r => `<img src="https://ddragon.leagueoflegends.com/cdn/img/${r.icon}" class="rune-img">`).join("");
 
-        document.getElementById('result-area').classList.remove('hidden');
-    } catch (e) { 
-        console.error("Hata:", e); 
-    }
-    btn.innerText = "HEXTECH OLUŞTUR";
+            document.getElementById('result-area').classList.remove('hidden');
+        } catch(e) { console.error(e); }
+        btn.classList.remove('loading');
+        btn.disabled = false;
+    }, 1200);
 }

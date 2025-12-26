@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LoL Hextech Randomizer</title>
+    <title>LoL Hextech Builder</title>
     <link href="https://fonts.cdnfonts.com/css/beaufort-for-lol" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="bg-overlay"></div>
+    
     <div class="container">
         <div class="header">
             <h1>HEXTECH BUILDER</h1>
@@ -17,7 +18,7 @@
 
         <div class="controls">
             <div class="search-container">
-                <input type="text" id="champ-search" placeholder="Şampiyon ara... (Örn: Kas)" autocomplete="off">
+                <input type="text" id="champ-search" placeholder="Şampiyon ara veya aşağıdan seç..." autocomplete="off">
                 <div id="search-suggestions" class="suggestions-list"></div>
             </div>
             
@@ -29,21 +30,24 @@
                 <button class="lane-btn" onclick="setLane('BOTTOM', this)">ADC</button>
                 <button class="lane-btn" onclick="setLane('UTILITY', this)">SUP</button>
             </div>
+
+            <div id="lane-champions" class="lane-champs-grid">
+                </div>
         </div>
 
-        <div id="result-area" class="hidden fade-in">
-            <div id="champion-info">
+        <div id="result-area" class="hidden">
+            <div id="champion-info" class="reveal-anim">
                 <div class="img-frame">
                     <img id="champ-img" src="" alt="">
                 </div>
                 <h2 id="champ-name"></h2>
             </div>
 
-            <div id="spells-display" class="spells-row"></div>
+            <div id="spells-display" class="spells-row reveal-anim" style="animation-delay: 0.2s;"></div>
             
-            <div id="build-display" class="build-grid"></div>
+            <div id="build-display" class="build-grid reveal-anim" style="animation-delay: 0.4s;"></div>
 
-            <div id="rune-area" class="rune-container">
+            <div id="rune-area" class="rune-container reveal-anim" style="animation-delay: 0.6s;">
                 <div id="primary-runes" class="rune-column"></div>
                 <div class="rune-divider"></div>
                 <div id="secondary-runes" class="rune-column"></div>
@@ -51,9 +55,11 @@
         </div>
 
         <button id="generate-btn" onclick="generateBuild()">
-            <span>HEXTECH OLUŞTUR</span>
+            <div class="btn-content">HEXTECH OLUŞTUR</div>
+            <div class="btn-loader"></div>
         </button>
     </div>
+    
     <script src="script.js"></script>
 </body>
 </html>
